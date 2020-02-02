@@ -1,11 +1,14 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Application,ServerConfig,ndmDetails
+from .models import Application,ServerConfig,ndmDetails,Countries
 
 #admin.site.register(Application)
 admin.site.register(ServerConfig)
 admin.site.register(ndmDetails)
+admin.site.register(Countries)
+
+
 
 class AppAdmin(admin.ModelAdmin):
     list_display=('AppCSID','AppRegion','AppName','AppContacts')

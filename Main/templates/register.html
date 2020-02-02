@@ -1,0 +1,39 @@
+{% extends "LoginBase.html" %}
+{% load static %}
+{% block content %}
+
+            <form method="POST" class="text-left form-validate">
+              {% csrf_token %}
+
+              <div class="form-group-material">
+                <input id="register-username" type="text" name="username" required data-msg="Please enter your username" class="input-material">
+                <label for="register-username" class="label-material">Username</label>
+              </div>
+              <div class="form-group-material">
+                <input id="register-password" type="password" name="password1" required data-msg="Please enter your password" class="input-material">
+                <label for="register-password" class="label-material">Password</label>
+              </div>
+              <div class="form-group-material">
+                <input id="register-password" type="password" name="password2" required data-msg="Please enter your password" class="input-material">
+                <label for="register-password" class="label-material">Confirm Password</label>
+              </div>
+
+              <!--
+              <div class="form-group terms-conditions text-center">
+                <input id="register-agree" name="registerAgree" type="checkbox" required value="1" data-msg="Your agreement is required" class="form-control-custom">
+                <label for="register-agree">I agree with the terms and policy</label>
+              </div>
+              -->
+              {% if message %}
+              <ul style="color: red">
+                      {{ message }}
+              </ul>
+            {% endif %}
+      
+              <div class="form-group text-center">
+                <input id="register" type="submit" value="Register" class="btn btn-primary">
+              </div>
+            </form><small>Already have an account? </small><a href="login" class="signup">Login</a>
+          {% endblock %}
+
+          

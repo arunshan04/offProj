@@ -1,12 +1,22 @@
 from django.db import models
 
+
+class Countries(models.Model):
+    Region=models.CharField(max_length=5)
+    Name=models.CharField(max_length=20)
+    Name_CC=models.CharField(max_length=2)
+    cntry_cde=models.CharField(max_length=3)
+
+    def __str__(self):
+        return self.Name
+
+
 # Create your models here.
 class Application(models.Model):
     AppCSID=models.CharField(max_length=6)
     AppName=models.CharField(max_length=50)
-    regionData=(('APAC','APAC'),('EMEA','EMEA'),('NAP','NAP'))
-    AppRegion=models.CharField(max_length=4,choices=regionData,blank=True,help_text='Choose the Region',)
-    AppCountries=models.TextField()
+    AppRegion=models.CharField(max_length=50,default='')
+    AppCountries=models.ManyToManyField(Countries)
     AppContacts=models.CharField(max_length=500)
     AppManager=models.CharField(max_length=500)
     AppSupportContacts=models.CharField(max_length=500)
