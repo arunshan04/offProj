@@ -25,19 +25,21 @@ from django.core.mail import send_mail, get_connection
 # Create your views here.
 @csrf_protect
 def user_login(request):
-    Error=''
     if request.method=='POST' :
         username, password = request.POST.get('username'), request.POST.get('password')
         if User.objects.filter(username=username).exists():
-            user = authenticate(request,username=username, password=password)
+            user = authenticate(username=username, password=password)
             if user is not None:
-                login(request,user)
-                return HttpResponseRedirect(reverse('index'))
+                if user.is_active:
+                    login(request,user)
+                    return HttpResponseRedirect(reverse('index'))
+                else:
+                    messages.warning(request,'Account is InActive. Please Activate using the link shared in the Email')
             else:
-                Error='Account is InActive. Please Activate using the link shared in the Email'
+                messages.error(request,'User Password Error')
         else:
-            Error='User Does Not Exists. Please Singup...'
-    return render(request, 'login.html', {'message': Error})
+            messages.error(request,'User Does Not Exists. Please Singup...')
+    return render(request, 'login.html')
 
 class AccountActivationTokenGenerator(PasswordResetTokenGenerator):
     def _make_hash_value(self, user, timestamp):
@@ -65,11 +67,9 @@ def register(request):
                 'token': account_activation_token.make_token(user),
             })
             user.email_user(subject, message)
-            return render(request, 'register.html', {'message': "User Account Created Successfully Please check Mail For Activation"})
+            messages.success(request,'User Creation Success. Please check Mail For Activation')
         else:
-            return render(request, 'register.html', {'message': "User Already Exists"})
-    else:
-        form = AuthenticationForm()
+            messages.error(request, 'User Already Exists.. Please Login to Continue')  # <-
     return render(request, 'register.html')
 
 
@@ -88,13 +88,12 @@ def myForms(request):
     return render(request, 'forms.html')
 
 def forgotPassword(request):
-    Error=""
     if request.method=='POST':
         try:
             user=User.objects.get(username=request.POST.get('username'))
         except (TypeError, ValueError, OverflowError,User.DoesNotExist):
             user = None
-            Error='User Does Not Exists in the System. Please Singnup'
+            messages.error(request,'User Does Not Exists in the System. Please Singnup')
         if user is not None:
             subject = 'Account Password Reset'
             current_site = get_current_site(request)
@@ -106,9 +105,9 @@ def forgotPassword(request):
                     'token': account_activation_token.make_token(user),
                 })
             user.email_user(subject, message)
-            Error='Password Reset Link Sent to Registered Email'
+            messages.success(request,'Password Reset Link Sent to Registered Email..')
             print('MailSent')
-    return render(request, 'forgotPassword.html',{'message':Error})
+    return render(request, 'forgotPassword.html')
 
 
 
@@ -131,21 +130,23 @@ def activate(request, uidb64, token):
 
 
 def passwordReset(request, uidb64, token):
-    Error=""
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError,User.DoesNotExist):
+        user = None
+        messages.error(request,'User Does Not Exists in the System. Please Singup')
+        return HttpResponseRedirect('/forgotPassword')
     if request.method=='POST':
-        try:
-            uid = force_text(urlsafe_base64_decode(uidb64))
-            user = User.objects.get(pk=uid)
-        except (TypeError, ValueError, OverflowError,User.DoesNotExist):
-            user = None
-            Error='User Does Not Exists in the System. Please Singup'
-        print(user)
         if user is not None and account_activation_token.check_token(user, token):
             form=SetPasswordForm(user=user, data=request.POST)
             if form.is_valid():
                 form.save()
-                Error='Password Reset Completed SuccessFully...'
-            return redirect('/login',{'message':Error})
+                messages.success(request,'Password Reset Completed SuccessFully...')
+                return HttpResponseRedirect('/login')
+            else:
+                messages.error(request,'Passwords are Does not Match or Not Satisifing the Requirements..')
         else:
-            return render(request, 'forgotPassword.html')
+            messages.error(request,'Invalid Token or Reset Link')
+            return HttpResponseRedirect('/forgotPassword')
     return render(request, 'newPassword.html')
