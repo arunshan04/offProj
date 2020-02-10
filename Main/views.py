@@ -33,7 +33,7 @@ def user_login(request):
             if user is not None:
                 if user.is_active:
                     login(request,user)
-                    return HttpResponseRedirect(reverse('index'))
+                    return HttpResponseRedirect(reverse('index'),user)
                 else:
                     messages.warning(request,'Account is InActive. Please Activate using the link shared in the Email')
             else:
@@ -98,12 +98,11 @@ def register(request):
 @login_required(login_url='/login')
 def user_logout(request):
     logout(request)
-    print('User Loggedout')
     return HttpResponseRedirect(reverse('index'))
 
 @login_required(login_url='/login')
 def index(request):
-    return render(request, 'content.html')
+    return render(request, 'index1.html')
 
 @login_required(login_url='/login')
 def myForms(request):

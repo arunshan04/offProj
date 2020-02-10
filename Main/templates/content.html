@@ -1,406 +1,840 @@
-{% extends "index.html" %}
-
 {% load static %}
 {% block content %}
+<style style="text/css">
+  .ui-jqgrid .ui-jqgrid-view {
+    z-index: auto;
+  }
+  .ui-jqgrid .ui-jqgrid-view, .ui-jqgrid .ui-paging-info, .ui-jqgrid .ui-pg-selbox, .ui-jqgrid .ui-pg-table {
+    font-size: 13px;
+  }
+  .ui-jqgrid .ui-jqgrid-title {
+    float: left;
+    margin: 8px;
+  }
+  .ui-jqgrid .ui-jqgrid-title-rtl {
+    float: right;
+    margin: 8px;
+  }
+  .ui-jqgrid-view>.ui-jqgrid-titlebar {
+    height: 40px;
+    line-height: 24px;
+    color: #FFF;
+    background: #307ECC;
+    padding: 0;
+    font-size: 15px;
+  }
+  .ui-jqgrid tr.jqgrow.ui-row-rtl td:last-child {
+    border-right: none;
+    border-left: 1px solid #E1E1E1;
+  }
+  .ui-jqgrid .ui-jqgrid-hdiv {
+    background-color: #EFF3F8;
+    border: 1px solid #D3D3D3;
+    border-width: 1px 0 0 1px;
+    line-height: 15px;
+    font-weight: 700;
+    color: #777;
+    text-shadow: none;
+  }
+  .ui-jqgrid .ui-jqgrid-htable thead {
+    background-color: #EFF3F8;
+  }
+  .ui-jqgrid .ui-jqgrid-htable th span.ui-jqgrid-resize {
+    height: 45px!important;
+  }
+  .ui-jqgrid .ui-jqgrid-htable th div {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    overflow: visible;
+  }
+  .ui-jqgrid-hdiv .ui-jqgrid-htable {
+    border-top: 1px solid #E1E1E1;
+  }
+  .ui-jqgrid-titlebar {
+    position: relative;
+    top: 1px;
+    z-index: 1;
+  }
+  .ui-jqgrid tr.jqgrow, .ui-jqgrid tr.ui-row-ltr, .ui-jqgrid tr.ui-row-rtl {
+    border: none;
+        height:auto;
+        overflow:hidden;
+        padding-right:4px;
+        padding-top:2px;
+        position:relative;
+        vertical-align:text-top;
+        white-space:normal !important;
+  }
+  .ui-jqgrid tr.ui-row-ltr td, .ui-jqgrid tr.ui-row-rtl td {
+    border-bottom: 1px solid #E1E1E1;
+    padding: 6px 4px;
+    border-color: #E1E1E1 !important;
+        white-space: normal !important;
+        height:auto;
+        vertical-align:text-top; 
+        padding-top:2px;
+  }
+  .ui-jqgrid tr.ui-state-highlight.ui-row-ltr td {
+    border-right-color: #C7D3A9;
+  }
+  .ui-jqgrid tr.ui-state-highlight.ui-row-rtl td {
+    border-left-color: #C7D3A9;
+  }
+  .ui-jqgrid-btable .ui-widget-content.ui-priority-secondary {
+    background-image: none;
+    background-color: #F9F9F9;
+    opacity: 1;
+  }
+  .ui-jqgrid-btable .ui-widget-content.ui-state-hover {
+    background-image: none;
+    background-color: #EFF4F7;
+    opacity: 1;
+  }
+  .ui-jqgrid-btable .ui-widget-content.ui-state-highlight {
+    background-color: #E4EFC9;
+  }
+  .ui-jqgrid .ui-jqgrid-pager {
+    line-height: 15px;
+    height: 55px;
+    padding-top: 10px!important;
+    padding-bottom: 10px!important;
+    background-color: #EFF3F8!important;
+    border-bottom: 1px solid #E1E1E1!important;
+    border-top: 1px solid #E1E1E1!important;
+  }
+  .ui-jqgrid .ui-pg-input {
+    font-size: inherit;
+    width: 24px;
+    height: 20px;
+    line-height: 16px;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    text-align: center;
+    padding-top: 1px;
+    padding-bottom: 1px;
+  }
+  .ui-jqgrid .ui-pg-selbox {
+    display: block;
+    height: 24px;
+    width: 60px;
+    margin: 0;
+    padding: 1px;
+    line-height: normal;
+  }
+  .ui-jqgrid .ui-pager-control {
+    height: 50px;
+    position: relative;
+    padding-left: 9px;
+    padding-right: 9px;
+  }
+  .ui-jqgrid .ui-jqgrid-toppager {
+    height: auto!important;
+    background-color: #EFF3F8;
+    border-bottom: 1px solid #E1E1E1!important;
+  }
+  .ui-pg-table .navtable .ui-corner-all {
+    border-radius: 0;
+  }
+  .ui-jqgrid .ui-pg-button .ui-separator {
+    margin-left: 4px;
+    margin-right: 4px;
+    border-color: #C9D4DB;
+  }
+  .ui-jqgrid .ui-jqgrid-btable {
+    border-left: 1px solid #E1E1E1;
+  }
+  .ui-jqgrid .ui-jqgrid-bdiv {
+    border-top: 1px solid #E1E1E1;
+    overflow-x: hidden;
+  }
+  .ui-jqgrid .loading {
+    position: absolute;
+    top: 45%;
+    left: 45%;
+    width: auto;
+    height: auto;
+    z-index: 111;
+    padding: 6px;
+    margin: 5px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 12px;
+    background-color: #FFF;
+    border: 2px solid #8EB8D1;
+    color: #E2B018;
+  }
+   
+  .ui-jqgrid .ui-jqgrid-labels {
+    border-bottom: none;
+    background: repeat-x #F2F2F2;
+    background-image: -webkit-linear-gradient(top, #F8F8F8 0, #ECECEC 100%);
+    background-image: -o-linear-gradient(top, #F8F8F8 0, #ECECEC 100%);
+    background-image: linear-gradient(to bottom, #F8F8F8 0, #ECECEC 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff8f8f8',  endColorstr='#ffececec',  GradientType=0);
+    padding: 0!important;
+    border-left: 1px solid #E1E1E1!important;
+  }
+  .ui-jqgrid .ui-jqgrid-labels th {
+    border-right: 1px solid #E1E1E1!important;
+    text-align: left!important;
+  }
+  .ui-jqgrid-labels th[id*="_cb"]:first-child>div {
+    padding-top: 0;
+    text-align: center!important;
+  }
+  .ui-jqgrid-sortable {
+    padding-left: 4px;
+    font-size: 13px;
+    color: #777;
+    font-weight: 700;
+  }
+  .ui-jqgrid-sortable:hover {
+    color: #547EA8;
+  }
+  th[aria-selected=true] {
+    background-image: -webkit-linear-gradient(top, #EFF3F8 0, #E3E7ED 100%);
+    background-image: -o-linear-gradient(top, #EFF3F8 0, #E3E7ED 100%);
+    background-image: linear-gradient(to bottom, #EFF3F8 0, #E3E7ED 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffeff3f8',  endColorstr='#ffe3e7ed',  GradientType=0);
+  }
+  th[aria-selected=true] .ui-jqgrid-sortable {
+    color: #307ECC;
+  }
+  .ui-jqgrid .ui-icon {
+    text-indent: 0;
+    color: #307ECC;
+    float: none;
+    right: 2px;
+  }
+  .rtl .ui-jqgrid .ui-icon {
+    right: auto;
+    left: 2px;
+  }
+  .ui-jqgrid .ui-icon.ui-state-disabled {
+    color: #BBB;
+  }
+  .ui-jqgrid .ui-icon.ui-state-disabled:hover {
+    padding: 0;
+  }
+  .ui-grid-ico-sort:before {
+    display: inline;
+    font-size: 12px;
+  }
+  .ui-icon-asc:before {
+    content: "\f0d8"}
+  .ui-pg-table>tbody>tr>.ui-pg-button>.ui-icon {
+    display: inline-block;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    line-height: 22px;
+    text-align: center;
+    position: static;
+    float: none;
+    margin: 0 2px!important;
+    color: grey;
+    border: 1px solid #CCC;
+    background-color: #FFF;
+    border-radius: 100%}
+  .ui-pg-table>tbody>tr>.ui-pg-button>.ui-icon:hover {
+    color: #699AB5;
+    border-color: #699AB5;
+  }
+  .ui-pg-table>tbody>tr>.ui-pg-button>.ui-icon:before {
+    width: 20px;
+    text-align: center;
+    display: inline-block;
+  }
+  .ui-pg-table>tbody>tr>.ui-pg-button.ui-state-disabled .ui-icon {
+    color: #B0B0B0;
+    background-color: #F7F7F7;
+    border-color: #DDD;
+    -moz-transform: scale(.9);
+    -webkit-transform: scale(.9);
+    -o-transform: scale(.9);
+    -ms-transform: scale(.9);
+    transform: scale(.9);
+  }
+  .ui-jqgrid-btable input, .ui-jqgrid-btable select, .ui-jqgrid-btable textarea {
+    padding: 2px;
+    width: auto;
+    max-width: 100%;
+    margin-bottom: 0;
+  }
+  .ui-jqgrid-btable select {
+    padding: 1px;
+    height: 25px;
+    line-height: 25px;
+  }
+   
+  .ui-pg-div .ui-icon {
+    display: inline-block;
+    width: 18px;
+    float: none;
+    position: static;
+    text-align: center;
+    opacity: .85;
+    -webkit-transition: all .12s;
+    -o-transition: all .12s;
+    transition: all .12s;
+    margin: 0 1px;
+    vertical-align: middle;
+    cursor: pointer;
+    font-size: 17px;
+  }
+  .ui-pg-div .ui-icon:hover {
+    -moz-transform: scale(1.2);
+    -webkit-transform: scale(1.2);
+    -o-transform: scale(1.2);
+    -ms-transform: scale(1.2);
+    transform: scale(1.2);
+    opacity: 1;
+    position: static;
+    margin: 0 1px;
+  }
+  .ui-pg-div .ui-icon:before {
+    font-family: FontAwesome;
+    display: inline;
+  }
+   
+   
+  .ui-jqgrid .ui-pg-button:hover, .ui-jqgrid .ui-state-disabled:hover {
+    padding: 0 1px;
+        border-style: none !important;
+  }
+  .ui-jqgrid .ui-pg-table .ui-pg-button.ui-state-disabled:hover>.ui-pg-div>.ui-icon, .ui-jqgrid .ui-pg-table .ui-pg-button.ui-state-disabled:hover>.ui-separator {
+    margin-left: 4px;
+    margin-right: 4px;
+  }
+  @media only screen and (max-width:767px) {
+    .ui-jqgrid .ui-jqgrid-pager {
+    height: 90px;
+  }
+  .ui-jqgrid .ui-jqgrid-pager>.ui-pager-control {
+    height: 85px;
+    padding-top: 10px!important;
+  }
+  .ui-jqgrid .ui-jqgrid-pager>.ui-pager-control>.ui-pg-table>tbody>tr>td {
+    vertical-align: top;
+  }
+  .ui-jqgrid .ui-jqgrid-pager>.ui-pager-control>.ui-pg-table>tbody>tr>td#grid-pager_center {
+    width: 0!important;
+    position: static;
+  }
+  .ui-jqgrid .ui-jqgrid-pager>.ui-pager-control>.ui-pg-table>tbody>tr>td#grid-pager_center>.ui-pg-table {
+    margin: 36px auto 0;
+    position: absolute;
+    right: 0;
+    left: 0;
+    text-align: center;
+  }
+  .ui-jqgrid .ui-jqgrid-pager .navtable {
+    height: auto;
+  }
+  }.dd
 
-      <!-- Counts Section -->
-      <section class="dashboard-counts section-padding">
-        <div class="container-fluid">
-          <div class="row">
-            <!-- Count item widget-->
-            <div class="col-xl-2 col-md-4 col-6">
-              <div class="wrapper count-title d-flex">
-                <div class="icon"><i class="icon-user"></i></div>
-                <div class="name"><strong class="text-uppercase">New Clients</strong><span>Last 7 days</span>
-                  <div class="count-number">99</div>
-                </div>
-              </div>
+  </style>
+<section class="dashboard-counts section-padding">
+   <div class="container-fluid">
+      <div class="row">
+         <!-- Count item widget-->
+         <div class="col-xl-2 col-md-4 col-6">
+            <div class="wrapper count-title d-flex">
+               <div class="icon"><i class="icon-user"></i></div>
+               <div class="name">
+                  <strong class="text-uppercase">New Clients</strong><span>Last 7 days</span>
+                  <div class="count-number">25</div>
+               </div>
             </div>
-            <!-- Count item widget-->
-            <div class="col-xl-2 col-md-4 col-6">
-              <div class="wrapper count-title d-flex">
-                <div class="icon"><i class="icon-padnote"></i></div>
-                <div class="name"><strong class="text-uppercase">Work Orders</strong><span>Last 5 days</span>
+         </div>
+         <!-- Count item widget-->
+         <div class="col-xl-2 col-md-4 col-6">
+          <div class="wrapper count-title d-flex">
+             <div class="icon"><i class="icon-user"></i></div>
+             <div class="name">
+                <strong class="text-uppercase">New Clients</strong><span>Last 7 days</span>
+                <div class="count-number">25</div>
+             </div>
+          </div>
+       </div>
+       <!-- Count item widget-->
+       <div class="col-xl-2 col-md-4 col-6">
+        <div class="wrapper count-title d-flex">
+           <div class="icon"><i class="icon-user"></i></div>
+           <div class="name">
+              <strong class="text-uppercase">New Clients</strong><span>Last 7 days</span>
+              <div class="count-number">25</div>
+           </div>
+        </div>
+     </div>
+     <!-- Count item widget-->
+     <div class="col-xl-2 col-md-4 col-6">
+      <div class="wrapper count-title d-flex">
+         <div class="icon"><i class="icon-user"></i></div>
+         <div class="name">
+            <strong class="text-uppercase">New Clients</strong><span>Last 7 days</span>
+            <div class="count-number">25</div>
+         </div>
+      </div>
+   </div>
+   <!-- Count item widget-->
+   <div class="col-xl-2 col-md-4 col-6">
+    <div class="wrapper count-title d-flex">
+       <div class="icon"><i class="icon-user"></i></div>
+       <div class="name">
+          <strong class="text-uppercase">New Clients</strong><span>Last 7 days</span>
+          <div class="count-number">25</div>
+       </div>
+    </div>
+ </div>
+ <!-- Count item widget-->
+ <div class="col-xl-2 col-md-4 col-6">
+  <div class="wrapper count-title d-flex">
+     <div class="icon"><i class="icon-user"></i></div>
+     <div class="name">
+        <strong class="text-uppercase">New Clients</strong><span>Last 7 days</span>
+        <div class="count-number">25</div>
+     </div>
+  </div>
+</div>
+<!-- Count item widget-->
+<div class="col-xl-2 col-md-4 col-6">
+  <div class="wrapper count-title d-flex">
+     <div class="icon"><i class="icon-user"></i></div>
+     <div class="name">
+        <strong class="text-uppercase">New Clients</strong><span>Last 7 days</span>
+        <div class="count-number">25</div>
+     </div>
+  </div>
+</div>
+
+         <!-- Count item widget-->
+         <div class="col-xl-2 col-md-4 col-6">
+            <div class="wrapper count-title d-flex">
+               <div class="icon"><i class="icon-padnote"></i></div>
+               <div class="name">
+                  <strong class="text-uppercase">Work Orders</strong><span>Last 5 days</span>
                   <div class="count-number">400</div>
-                </div>
-              </div>
+               </div>
             </div>
-            <!-- Count item widget-->
-            <div class="col-xl-2 col-md-4 col-6">
-              <div class="wrapper count-title d-flex">
-                <div class="icon"><i class="icon-check"></i></div>
-                <div class="name"><strong class="text-uppercase">New Quotes</strong><span>Last 2 months</span>
+         </div>
+         <!-- Count item widget-->
+         <div class="col-xl-2 col-md-4 col-6">
+            <div class="wrapper count-title d-flex">
+               <div class="icon"><i class="icon-check"></i></div>
+               <div class="name">
+                  <strong class="text-uppercase">New Quotes</strong><span>Last 2 months</span>
                   <div class="count-number">342</div>
-                </div>
-              </div>
+               </div>
             </div>
-            <!-- Count item widget-->
-            <div class="col-xl-2 col-md-4 col-6">
-              <div class="wrapper count-title d-flex">
-                <div class="icon"><i class="icon-bill"></i></div>
-                <div class="name"><strong class="text-uppercase">New Invoices</strong><span>Last 2 days</span>
+         </div>
+         <!-- Count item widget-->
+         <div class="col-xl-2 col-md-4 col-6">
+            <div class="wrapper count-title d-flex">
+               <div class="icon"><i class="icon-bill"></i></div>
+               <div class="name">
+                  <strong class="text-uppercase">New Invoices</strong><span>Last 2 days</span>
                   <div class="count-number">123</div>
-                </div>
-              </div>
+               </div>
             </div>
-            <!-- Count item widget-->
-            <div class="col-xl-2 col-md-4 col-6">
-              <div class="wrapper count-title d-flex">
-                <div class="icon"><i class="icon-list"></i></div>
-                <div class="name"><strong class="text-uppercase">Open Cases</strong><span>Last 3 months</span>
+         </div>
+         <!-- Count item widget-->
+         <div class="col-xl-2 col-md-4 col-6">
+            <div class="wrapper count-title d-flex">
+               <div class="icon"><i class="icon-list"></i></div>
+               <div class="name">
+                  <strong class="text-uppercase">Open Cases</strong><span>Last 3 months</span>
                   <div class="count-number">92</div>
-                </div>
-              </div>
+               </div>
             </div>
-            <!-- Count item widget-->
-            <div class="col-xl-2 col-md-4 col-6">
-              <div class="wrapper count-title d-flex">
-                <div class="icon"><i class="icon-list-1"></i></div>
-                <div class="name"><strong class="text-uppercase">New Cases</strong><span>Last 7 days</span>
+         </div>
+         <!-- Count item widget-->
+         <div class="col-xl-2 col-md-4 col-6">
+            <div class="wrapper count-title d-flex">
+               <div class="icon"><i class="icon-list-1"></i></div>
+               <div class="name">
+                  <strong class="text-uppercase">New Cases</strong><span>Last 7 days</span>
                   <div class="count-number">70</div>
-                </div>
-              </div>
+               </div>
             </div>
-          </div>
-        </div>
-      </section>
-      <!-- Header Section-->
-      <section class="dashboard-header section-padding">
-        <div class="container-fluid">
-          <div class="row d-flex align-items-md-stretch">
-            <!-- To Do List-->
-            <div class="col-lg-3 col-md-6">
-              <div class="card to-do">
-                <h2 class="display h4">To do List</h2>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-                <ul class="check-lists list-unstyled">
-                  <li class="d-flex align-items-center"> 
-                    <input type="checkbox" id="list-1" name="list-1" class="form-control-custom">
-                    <label for="list-1">Similique sunt in culpa qui officia</label>
-                  </li>
-                  <li class="d-flex align-items-center"> 
-                    <input type="checkbox" id="list-2" name="list-2" class="form-control-custom">
-                    <label for="list-2">Ed ut perspiciatis unde omnis iste</label>
-                  </li>
-                  <li class="d-flex align-items-center"> 
-                    <input type="checkbox" id="list-3" name="list-3" class="form-control-custom">
-                    <label for="list-3">At vero eos et accusamus et iusto </label>
-                  </li>
-                  <li class="d-flex align-items-center"> 
-                    <input type="checkbox" id="list-4" name="list-4" class="form-control-custom">
-                    <label for="list-4">Explicabo Nemo ipsam voluptatem</label>
-                  </li>
-                  <li class="d-flex align-items-center"> 
-                    <input type="checkbox" id="list-5" name="list-5" class="form-control-custom">
-                    <label for="list-5">Similique sunt in culpa qui officia</label>
-                  </li>
-                  <li class="d-flex align-items-center"> 
-                    <input type="checkbox" id="list-6" name="list-6" class="form-control-custom">
-                    <label for="list-6">At vero eos et accusamus et iusto </label>
-                  </li>
-                  <li class="d-flex align-items-center"> 
-                    <input type="checkbox" id="list-7" name="list-7" class="form-control-custom">
-                    <label for="list-7">Similique sunt in culpa qui officia</label>
-                  </li>
-                  <li class="d-flex align-items-center"> 
-                    <input type="checkbox" id="list-8" name="list-8" class="form-control-custom">
-                    <label for="list-8">Ed ut perspiciatis unde omnis iste</label>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <!-- Pie Chart-->
-            <div class="col-lg-3 col-md-6">
-              <div class="card project-progress">
-                <h2 class="display h4">Project Beta progress</h2>
-                <p> Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-                <div class="pie-chart">
-                  <canvas id="pieChart" width="300" height="300"> </canvas>
-                </div>
-              </div>
-            </div>
-            <!-- Line Chart -->
-            <div class="col-lg-6 col-md-12 flex-lg-last flex-md-first align-self-baseline">
-              <div class="card sales-report">
-                <h2 class="display h4">Sales marketing report</h2>
-                <p> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor amet officiis</p>
-                <div class="line-chart">
-                  <canvas id="lineCahrt"></canvas>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <!-- Statistics Section-->
-      <section class="statistics">
-        <div class="container-fluid">
-          <div class="row d-flex">
-            <div class="col-lg-4">
-              <!-- Income-->
-              <div class="card income text-center">
-                <div class="icon"><i class="icon-line-chart"></i></div>
-                <div class="number">126,418</div><strong class="text-primary">All Income</strong>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit sed do.</p>
-              </div>
-            </div>
-            <div class="col-lg-4">
-              <!-- Monthly Usage-->
-              <div class="card data-usage">
-                <h2 class="display h4">Monthly Usage</h2>
-                <div class="row d-flex align-items-center">
-                  <div class="col-sm-6">
-                    <div id="progress-circle" class="d-flex align-items-center justify-content-center"></div>
-                  </div>
-                  <div class="col-sm-6"><strong class="text-primary">80.56 Gb</strong><small>Current Plan</small><span>100 Gb Monthly</span></div>
-                </div>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing.</p>
-              </div>
-            </div>
-            <div class="col-lg-4">
-              <!-- User Actibity-->
-              <div class="card user-activity">
-                <h2 class="display h4">User Activity</h2>
-                <div class="number">210</div>
-                <h3 class="h4 display">Social Users</h3>
-                <div class="progress">
-                  <div role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar bg-primary"></div>
-                </div>
-                <div class="page-statistics d-flex justify-content-between">
-                  <div class="page-statistics-left"><span>Pages Visits</span><strong>230</strong></div>
-                  <div class="page-statistics-right"><span>New Visits</span><strong>73.4%</strong></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <!-- Updates Section -->
-      <section class="mt-30px mb-30px">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-lg-4 col-md-12">
-              <!-- Recent Updates Widget          -->
-              <div id="new-updates" class="card updates recent-updated">
-                <div id="updates-header" class="card-header d-flex justify-content-between align-items-center">
-                  <h2 class="h5 display"><a data-toggle="collapse" data-parent="#new-updates" href="#updates-box" aria-expanded="true" aria-controls="updates-box">News Updates</a></h2><a data-toggle="collapse" data-parent="#new-updates" href="#updates-box" aria-expanded="true" aria-controls="updates-box"><i class="fa fa-angle-down"></i></a>
-                </div>
-                <div id="updates-box" role="tabpanel" class="collapse show">
-                  <ul class="news list-unstyled">
-                    <!-- Item-->
-                    <li class="d-flex justify-content-between"> 
-                      <div class="left-col d-flex">
-                        <div class="icon"><i class="icon-rss-feed"></i></div>
-                        <div class="title"><strong>Lorem ipsum dolor sit amet.</strong>
-                          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>
-                        </div>
-                      </div>
-                      <div class="right-col text-right">
-                        <div class="update-date">24<span class="month">Jan</span></div>
-                      </div>
-                    </li>
-                    <!-- Item-->
-                    <li class="d-flex justify-content-between"> 
-                      <div class="left-col d-flex">
-                        <div class="icon"><i class="icon-rss-feed"></i></div>
-                        <div class="title"><strong>Lorem ipsum dolor sit amet.</strong>
-                          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>
-                        </div>
-                      </div>
-                      <div class="right-col text-right">
-                        <div class="update-date">24<span class="month">Jan</span></div>
-                      </div>
-                    </li>
-                    <!-- Item-->
-                    <li class="d-flex justify-content-between"> 
-                      <div class="left-col d-flex">
-                        <div class="icon"><i class="icon-rss-feed"></i></div>
-                        <div class="title"><strong>Lorem ipsum dolor sit amet.</strong>
-                          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>
-                        </div>
-                      </div>
-                      <div class="right-col text-right">
-                        <div class="update-date">24<span class="month">Jan</span></div>
-                      </div>
-                    </li>
-                    <!-- Item-->
-                    <li class="d-flex justify-content-between"> 
-                      <div class="left-col d-flex">
-                        <div class="icon"><i class="icon-rss-feed"></i></div>
-                        <div class="title"><strong>Lorem ipsum dolor sit amet.</strong>
-                          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>
-                        </div>
-                      </div>
-                      <div class="right-col text-right">
-                        <div class="update-date">24<span class="month">Jan</span></div>
-                      </div>
-                    </li>
-                    <!-- Item-->
-                    <li class="d-flex justify-content-between"> 
-                      <div class="left-col d-flex">
-                        <div class="icon"><i class="icon-rss-feed"></i></div>
-                        <div class="title"><strong>Lorem ipsum dolor sit amet.</strong>
-                          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>
-                        </div>
-                      </div>
-                      <div class="right-col text-right">
-                        <div class="update-date">24<span class="month">Jan</span></div>
-                      </div>
-                    </li>
-                    <!-- Item-->
-                    <li class="d-flex justify-content-between"> 
-                      <div class="left-col d-flex">
-                        <div class="icon"><i class="icon-rss-feed"></i></div>
-                        <div class="title"><strong>Lorem ipsum dolor sit amet.</strong>
-                          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>
-                        </div>
-                      </div>
-                      <div class="right-col text-right">
-                        <div class="update-date">24<span class="month">Jan</span></div>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <!-- Recent Updates Widget End-->
-            </div>
-            <div class="col-lg-4 col-md-6">
-              <!-- Daily Feed Widget-->
-              <div id="daily-feeds" class="card updates daily-feeds">
-                <div id="feeds-header" class="card-header d-flex justify-content-between align-items-center">
-                  <h2 class="h5 display"><a data-toggle="collapse" data-parent="#daily-feeds" href="#feeds-box" aria-expanded="true" aria-controls="feeds-box">Your daily Feeds </a></h2>
-                  <div class="right-column">
-                    <div class="badge badge-primary">10 messages</div><a data-toggle="collapse" data-parent="#daily-feeds" href="#feeds-box" aria-expanded="true" aria-controls="feeds-box"><i class="fa fa-angle-down"></i></a>
-                  </div>
-                </div>
-                <div id="feeds-box" role="tabpanel" class="collapse show">
-                  <div class="feed-box">
-                    <ul class="feed-elements list-unstyled">
-                      <!-- List-->
-                      <li class="clearfix">
-                        <div class="feed d-flex justify-content-between">
-                          <div class="feed-body d-flex justify-content-between"><a href="#" class="feed-profile"><img src="{% static 'img/avatar-5.jpg'%}" alt="person" class="img-fluid rounded-circle"></a>
-                            <div class="content"><strong>Aria Smith</strong><small>Posted a new blog </small>
-                              <div class="full-date"><small>Today 5:60 pm - 12.06.2014</small></div>
-                            </div>
-                          </div>
-                          <div class="date"><small>5min ago</small></div>
-                        </div>
-                      </li>
-                      <!-- List-->
-                      <li class="clearfix">
-                        <div class="feed d-flex justify-content-between">
-                          <div class="feed-body d-flex justify-content-between"><a href="#" class="feed-profile"><img src="{% static 'img/avatar-2.jpg'%}" alt="person" class="img-fluid rounded-circle"></a>
-                            <div class="content"><strong>Frank Williams</strong><small>Posted a new blog </small>
-                              <div class="full-date"><small>Today 5:60 pm - 12.06.2014</small></div>
-                              <div class="CTAs"><a href="#" class="btn btn-xs btn-dark"><i class="fa fa-thumbs-up"> </i>Like</a><a href="#" class="btn btn-xs btn-dark"><i class="fa fa-heart"> </i>Love</a></div>
-                            </div>
-                          </div>
-                          <div class="date"><small>5min ago</small></div>
-                        </div>
-                      </li>
-                      <!-- List-->
-                      <li class="clearfix">
-                        <div class="feed d-flex justify-content-between">
-                          <div class="feed-body d-flex justify-content-between"><a href="#" class="feed-profile"><img src="{% static 'img/avatar-3.jpg'%}" alt="person" class="img-fluid rounded-circle"></a>
-                            <div class="content"><strong>Ashley Wood</strong><small>Posted a new blog </small>
-                              <div class="full-date"><small>Today 5:60 pm - 12.06.2014</small></div>
-                            </div>
-                          </div>
-                          <div class="date"><small>5min ago</small></div>
-                        </div>
-                      </li>
-                      <!-- List-->
-                      <li class="clearfix">
-                        <div class="feed d-flex justify-content-between">
-                          <div class="feed-body d-flex justify-content-between"><a href="#" class="feed-profile"><img src="{% static 'img/avatar-1.jpg'%}" alt="person" class="img-fluid rounded-circle"></a>
-                            <div class="content"><strong>Jason Doe</strong><small>Posted a new blog </small>
-                              <div class="full-date"><small>Today 5:60 pm - 12.06.2014</small></div>
-                            </div>
-                          </div>
-                          <div class="date"><small>5min ago</small></div>
-                        </div>
-                        <div class="message-card"> <small>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s. Over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</small></div>
-                        <div class="CTAs pull-right"><a href="#" class="btn btn-xs btn-dark"><i class="fa fa-thumbs-up"> </i>Like</a></div>
-                      </li>
-                      <!-- List-->
-                      <li class="clearfix">
-                        <div class="feed d-flex justify-content-between">
-                          <div class="feed-body d-flex justify-content-between"><a href="#" class="feed-profile"><img src="{% static 'img/avatar-6.jpg'%}" alt="person" class="img-fluid rounded-circle"></a>
-                            <div class="content"><strong>Sam Martinez</strong><small>Posted a new blog </small>
-                              <div class="full-date"><small>Today 5:60 pm - 12.06.2014</small></div>
-                            </div>
-                          </div>
-                          <div class="date"><small>5min ago</small></div>
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <!-- Daily Feed Widget End-->
-            </div>
-            <div class="col-lg-4 col-md-6">
-              <!-- Recent Activities Widget      -->
-              <div id="recent-activities-wrapper" class="card updates activities">
-                <div id="activites-header" class="card-header d-flex justify-content-between align-items-center">
-                  <h2 class="h5 display"><a data-toggle="collapse" data-parent="#recent-activities-wrapper" href="#activities-box" aria-expanded="true" aria-controls="activities-box">Recent Activities</a></h2><a data-toggle="collapse" data-parent="#recent-activities-wrapper" href="#activities-box" aria-expanded="true" aria-controls="activities-box"><i class="fa fa-angle-down"></i></a>
-                </div>
-                <div id="activities-box" role="tabpanel" class="collapse show">
-                  <ul class="activities list-unstyled">
-                    <!-- Item-->
-                    <li>
-                      <div class="row">
-                        <div class="col-4 date-holder text-right">
-                          <div class="icon"><i class="icon-clock"></i></div>
-                          <div class="date"> <span>6:00 am</span><span class="text-info">6 hours ago</span></div>
-                        </div>
-                        <div class="col-8 content"><strong>Meeting</strong>
-                          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud.                </p>
-                        </div>
-                      </div>
-                    </li>
-                    <!-- Item-->
-                    <li>
-                      <div class="row">
-                        <div class="col-4 date-holder text-right">
-                          <div class="icon"><i class="icon-clock"></i></div>
-                          <div class="date"> <span>6:00 am</span><span class="text-info">6 hours ago</span></div>
-                        </div>
-                        <div class="col-8 content"><strong>Meeting</strong>
-                          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud.                </p>
-                        </div>
-                      </div>
-                    </li>
-                    <!-- Item-->
-                    <li>
-                      <div class="row">
-                        <div class="col-4 date-holder text-right">
-                          <div class="icon"><i class="icon-clock"></i></div>
-                          <div class="date"> <span>6:00 am</span><span class="text-info">6 hours ago</span></div>
-                        </div>
-                        <div class="col-8 content"><strong>Meeting</strong>
-                          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud.                </p>
-                        </div>
-                      </div>
-                    </li>
-                    <!-- Item-->
-                    <li>
-                      <div class="row">
-                        <div class="col-4 date-holder text-right">
-                          <div class="icon"><i class="icon-clock"></i></div>
-                          <div class="date"> <span>6:00 am</span><span class="text-info">6 hours ago</span></div>
-                        </div>
-                        <div class="col-8 content"><strong>Meeting</strong>
-                          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud.                </p>
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+         </div>
+      </div>
+   </div>
+</section>
+<section class="dashboard-header section-padding">
+   <div class="container-fluid">
+      <div class="row">
+         <!-- Count item widget-->
+         <div class="col-xl-3 col-md-4 col-6">
+            <div id="con1"></div>
+         </div>
+         <div class="col-xl-3 col-md-4 col-6">
+            <div id="con2"></div>
+         </div>
+         <div class="col-xl-3 col-md-4 col-6">
+            <div id="con3"></div>
+         </div>
+         <div class="col-xl-3 col-md-4 col-6">
+            <div id="con4"></div>
+         </div>
+      </div>
+   </div>
+</section>
+<section>
+<div style="margin-left:20px">
+  <table id="jqGrid"></table>
+  <div id="jqGridPager"></div>
+</div>
+</section>
+<!-- Main File-->
+<script type="text/ecmascript" src="http://www.guriddo.net/demo/js/jquery.min.js"></script> 
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://d19m59y37dris4.cloudfront.net/dashboard-premium/1-4-5/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="https://d19m59y37dris4.cloudfront.net/dashboard-premium/1-4-5/vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+
+
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+
+    <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/redmond/jquery-ui.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/redmond/jquery-ui.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.2/css/ui.jqgrid.min.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.2/jquery.jqgrid.min.js"></script>
+
+
+    
+    <meta charset="utf-8" />
+  <script type="text/javascript"> 
+    function updatePagerIcons(table) {
+	var replacement =
+	{
+		'ui-icon-seek-first' : 'ace-icon fa fa-angle-double-left bigger-140',
+		'ui-icon-seek-prev' : 'ace-icon fa fa-angle-left bigger-140',
+		'ui-icon-seek-next' : 'ace-icon fa fa-angle-right bigger-140',
+		'ui-icon-seek-end' : 'ace-icon fa fa-angle-double-right bigger-140'
+	};
+	$('.ui-pg-table:not(.navtable) > tbody > tr > .ui-pg-button > .ui-icon').each(function(){
+		var icon = $(this);
+		var $class = $.trim(icon.attr('class').replace('ui-icon', ''));
+	   
+		if($class in replacement) icon.attr('class', 'ui-icon '+replacement[$class]);
+	})
+}
+
+$(document).ready(function () {
+            $("#jqGrid").jqGrid({
+                url: 'http://trirand.com/blog/phpjqgrid/examples/jsonp/getjsonp.php?callback=?&qwery=orders',
+                mtype: "GET",
+                datatype: "jsonp",
+                colModel: [
+                    { label: 'OrderID', name: 'OrderID', key: true, width: 75 },
+                    { label: 'Customer ID', name: 'CustomerID', width: 150 },
+                    { label: 'Order Date', name: 'OrderDate', width: 150 },
+                    { label: 'Freight', name: 'Freight', width: 150 },
+                    { label:'Ship Name', name: 'ShipName', width: 150 }
+                ],
+				page: 1,
+                width: 780,
+                height: 250,
+                rowNum: 20,
+				scrollPopUp:true,
+				scrollLeftOffset: "83%",
+				viewrecords: true,
+                scroll: 1, // set the scroll property to 1 to enable paging with scrollbar - virtual loading of records
+                emptyrecords: 'Scroll to bottom to retrieve new page', // the message will be displayed at the bottom 
+                pager: "#jqGridPager",
+                loadComplete : function() {
+				var table = this;
+				setTimeout(function(){
+							updatePagerIcons(table);
+				}, 0);
+		}
+
+            });
+        });
+
+
+   </script>
+
+<script src="{% static 'js/front.js' %}"></script>
+<script>
+   // Build the chart
+   Highcharts.chart('con1', {
+   chart: {
+     backgroundColor: 'transparent',
+     plotBackgroundColor: null,
+     plotBorderWidth: null,
+     plotShadow: false,
+     type: 'pie'
+   },
+   
+   title: {
+     text: 'Browser market shares in January, 2018'
+   },
+   tooltip: {
+     pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+   },
+   accessibility: {
+     point: {
+         valueSuffix: '%'
+     }
+   },
+   plotOptions: {
+     pie: {
+         allowPointSelect: true,
+         cursor: 'pointer',
+         dataLabels: {
+             enabled: false
+         },
+         showInLegend: true
+     }
+   },
+   credits: {
+   enabled: false
+   },
+   series: [{
+     name: 'Brands',
+     colorByPoint: true,
+     data: [{
+         name: 'Chrome',
+         y: 61.41,
+         sliced: true,
+         selected: true
+     }, {
+         name: 'Internet Explorer',
+         y: 11.84
+     }, {
+         name: 'Firefox',
+         y: 10.85
+     }, {
+         name: 'Edge',
+         y: 4.67
+     }, {
+         name: 'Safari',
+         y: 4.18
+     }, {
+         name: 'Other',
+         y: 7.05
+     }]
+   }]
+   });
+   
+   // Build the chart
+   Highcharts.chart('con2', {
+   chart: {
+     backgroundColor: 'transparent',
+     plotBackgroundColor: null,
+     plotBorderWidth: null,
+     plotShadow: false,
+     type: 'pie'
+   },
+   title: {
+     text: 'Browser market shares in January, 2018'
+   },
+   tooltip: {
+     pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+   },
+   accessibility: {
+     point: {
+         valueSuffix: '%'
+     }
+   },
+   plotOptions: {
+     pie: {
+         allowPointSelect: true,
+         cursor: 'pointer',
+         dataLabels: {
+             enabled: false
+         },
+         showInLegend: true
+     }
+   },
+   credits: {
+   enabled: false
+   },
+   series: [{
+     name: 'Brands',
+     colorByPoint: true,
+     data: [{
+         name: 'Chrome',
+         y: 61.41,
+         sliced: true,
+         selected: true
+     }, {
+         name: 'Internet Explorer',
+         y: 11.84
+     }, {
+         name: 'Firefox',
+         y: 10.85
+     }, {
+         name: 'Edge',
+         y: 4.67
+     }, {
+         name: 'Safari',
+         y: 4.18
+     }, {
+         name: 'Other',
+         y: 7.05
+     }]
+   }]
+   });
+   
+   
+   // Build the chart
+   Highcharts.chart('con3', {
+   chart: {
+     backgroundColor: 'transparent',
+     plotBackgroundColor: null,
+     plotBorderWidth: null,
+     plotShadow: false,
+     type: 'pie'
+   },
+   title: {
+     text: 'Browser market shares in January, 2018'
+   },
+   tooltip: {
+     pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+   },
+   accessibility: {
+     point: {
+         valueSuffix: '%'
+     }
+   },
+   plotOptions: {
+     pie: {
+         allowPointSelect: true,
+         cursor: 'pointer',
+         dataLabels: {
+             enabled: false
+         },
+         showInLegend: true
+     }
+   },
+   credits: {
+   enabled: false
+   },
+   series: [{
+     name: 'Brands',
+     colorByPoint: true,
+     data: [{
+         name: 'Chrome',
+         y: 61.41,
+         sliced: true,
+         selected: true
+     }, {
+         name: 'Internet Explorer',
+         y: 11.84
+     }, {
+         name: 'Firefox',
+         y: 10.85
+     }, {
+         name: 'Edge',
+         y: 4.67
+     }, {
+         name: 'Safari',
+         y: 4.18
+     }, {
+         name: 'Other',
+         y: 7.05
+     }]
+   }]
+   });
+   
+   
+   Highcharts.chart('con4', {
+   chart: {
+     type: 'spline',
+     backgroundColor: 'transparent',
+     animation: Highcharts.svg, // don't animate in old IE
+     marginRight: 10,
+     events: {
+         load: function () {
+   
+             // set up the updating of the chart each second
+             var series = this.series[0];
+             setInterval(function () {
+                 var x = (new Date()).getTime(), // current time
+                     y = Math.random();
+                 series.addPoint([x, y], true, true);
+             }, 1000);
+         }
+     }
+   },
+   
+   time: {
+     useUTC: false
+   },
+   
+   title: {
+     text: 'Live random data'
+   },
+   
+   accessibility: {
+     announceNewData: {
+         enabled: true,
+         minAnnounceInterval: 15000,
+         announcementFormatter: function (allSeries, newSeries, newPoint) {
+             if (newPoint) {
+                 return 'New point added. Value: ' + newPoint.y;
+             }
+             return false;
+         }
+     }
+   },
+   
+   xAxis: {
+     type: 'datetime',
+     tickPixelInterval: 150
+   },
+   
+   yAxis: {
+     title: {
+         text: 'Value'
+     },
+     plotLines: [{
+         value: 0,
+         width: 1,
+         color: '#808080'
+     }]
+   },
+   
+   tooltip: {
+     headerFormat: '<b>{series.name}</b><br/>',
+     pointFormat: '{point.x:%Y-%m-%d %H:%M:%S}<br/>{point.y:.2f}'
+   },
+   
+   legend: {
+     enabled: false
+   },
+   
+   exporting: {
+     enabled: false
+   }, credits: {
+   enabled: false
+   },
+   
+   series: [{
+     name: 'Random data',
+     data: (function () {
+         // generate an array of random data
+         var data = [],
+             time = (new Date()).getTime(),
+             i;
+   
+         for (i = -19; i <= 0; i += 1) {
+             data.push({
+                 x: time + i * 1000,
+                 y: Math.random()
+             });
+         }
+         return data;
+     }())
+   }]
+   });
+</script>
+
+
 {% endblock %}

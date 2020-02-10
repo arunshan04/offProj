@@ -5,8 +5,8 @@
           <!-- Sidebar Header    -->
           <div class="sidenav-header d-flex align-items-center justify-content-center">
             <!-- User Info-->
-            <div class="sidenav-header-inner text-center"><img src="{% static 'img/avatar-7.jpg'%}" alt="person" class="img-fluid rounded-circle">
-              <h2 class="h5">Arun Shanmugasundaram</h2><span>Web Developer</span>
+            <div class="sidenav-header-inner text-center">
+              <h2 class="h5">{{ user }}</h2><span>{{ user.last_login }}</span>
             </div>
             <!-- Small Brand information, appears on minimized sidebar-->
             <div class="sidenav-header-logo"><a href="#" class="brand-small text-center"> <strong>I</strong><strong class="text-primary">D</strong></a></div>
